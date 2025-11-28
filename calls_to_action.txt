@@ -1,0 +1,10 @@
+1|Child Welfare|We call upon the federal, provincial, territorial, and Aboriginal governments to reduce the number of Aboriginal children in care by providing adequate resources to keep families together and, where possible, keeping children in culturally appropriate environments.
+2|Child Welfare|We call upon the federal government to provide resources to ensure that Aboriginal families are well-supported to care for their children safely and that government policies consider the best interests of Aboriginal children.
+3|Child Welfare|We call upon all levels of government to fully implement Jordan's Principle to ensure that Indigenous children receive equal access to services without delays caused by jurisdictional disputes.
+4|Education|We call upon the federal government to enact an Aboriginal Languages Act to preserve and promote Indigenous languages and incorporate them into education systems.
+5|Education|We call upon the federal, provincial, and territorial governments to eliminate educational and employment gaps between Indigenous and non-Indigenous Canadians.
+6|Health|We call upon the federal government to close the gaps in health outcomes between Indigenous and non-Indigenous communities, particularly in maternal and child health, suicide prevention, and chronic diseases.
+7|Health|We call upon the federal government to recognize and implement the health-care rights of Indigenous peoples as identified in international law and constitutional law.
+8|Justice|We call upon the federal, provincial, and territorial governments to eliminate the overrepresentation of Indigenous children in the justice system.
+9|Justice|We call upon the federal government to provide equitable funding for Indigenous-specific legal aid programs.
+10|Justice|We call upon the federal government to develop and implement culturally relevant and community-based justice programs for Indigenous people.
