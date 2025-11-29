@@ -26,9 +26,6 @@ void trimNewline(char *s) { // Max: removes newline from fgets
     }
 }
 
-// ======================================================
-// OPTION 2 — Search Calls to Action by Category (BEGINNER)
-// ======================================================
 void searchCallsByCategory(const char *filename) {
 
     FILE *fp = fopen(filename, "r");      // Max: open the file
