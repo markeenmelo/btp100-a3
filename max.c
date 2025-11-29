@@ -78,4 +78,13 @@ void searchCallsByCategory(const char *filename) {
             printf("Call #%s\n", number);
             printf("Category: %s\n", category);
             printf("Description: %s\n", description);
-            printf("---------------------
+            printf("--------------------------------\n");
+        }
+    }
+
+    if (!found) {  // Max: if nothing matched
+        printf("No calls found in category '%s'.\n", userCategory);
+    }
+
+    fclose(fp);  // Max: close the file
+}
