@@ -10,6 +10,13 @@ struct fileContents { // struct for content analysis
 };
 
 void displayAll(struct fileContents list[], int count); // TYLER: prototype for display all function
+void saveCategoryToFile(struct fileContents list[], int count); // MARCOS MELO: prototype for save category to file function
+
+// helper functions
+int compareStrings(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings
+void copyString(char dest[], char src[]); // MARCOS MELO: prototype to copy string from src to dest
+int extractUniqueCategories(struct fileContents list[], int count, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
+void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype to build filename from category
 
 int main() { // begins the program
 	struct fileContents list[MAX_ITEMS]; // creates a struct array of data type fileContents and has max items as the size
@@ -48,6 +55,7 @@ int main() { // begins the program
 			printf("Total Calls to Action: %d\n", count); // prints the total calls to action
 			break; // breaks the switch case when code above completes
 		case 4:
+			saveCategoryToFile(list, count); // calls the save category to file function
 			break;
 		case 5:
 			printf("Thank you for using our program\n\n"); // case for when the user wants to exit
@@ -63,5 +71,128 @@ int main() { // begins the program
 void displayAll(struct fileContents list[], int count) { // display all function that returns void, takes a struct of datatype fileContent and count for running
 	for (int i = 0; i < count; i++) { // for loop that prints all the record's numbers and calls to actions
 		printf("Record %d: %s\n\n", list[i].number,  list[i].description); // prints the record number and calls to action content
+	}
+}
+
+// MARCOS MELO: Function to compare two strings manually, returns 1 if equal, 0 if different.
+int compareStrings(char str1[], char str2[]) {
+	int i = 0; // index for character comparison
+	int match = 1; // assume strings match initially
+	
+	// compare strings character by character
+	while (str1[i] != '\0' || str2[i] != '\0') {
+		if (str1[i] != str2[i]) match = 0; // strings don't match
+		i++; // move to next character
+	}
+	
+	return match; // return 1 if match, 0 if different
+}
+
+// MARCOS MELO: Function to copy string from src to dest manually.
+void copyString(char dest[], char src[]) {
+	int i = 0; // index for copying characters
+	
+	// copy each character from source to destination
+	while (src[i] != '\0') {
+		dest[i] = src[i]; // copy character
+		i++; // move to next character
+	}
+	dest[i] = '\0'; // add null terminator
+}
+
+// MARCOS MELO: Function to extract unique categories from the list.
+int extractUniqueCategories(struct fileContents list[], int count, char uniqueCategories[][20]) {
+	int uniqueCount = 0; // counter for unique categories
+	
+	// loop through all records to find unique categories
+	for (int i = 0; i < count; i++) {
+		int isDuplicate = 0; // flag to check if category already exists
+		
+		// check if category already in unique list
+		for (int j = 0; j < uniqueCount; j++) {
+			if (compareStrings(list[i].category, uniqueCategories[j]) == 1) isDuplicate = 1; // category already exists
+		}
+		
+		// if not duplicate, add to unique categories
+		if (isDuplicate == 0) {
+			copyString(uniqueCategories[uniqueCount], list[i].category); // copy category to unique list
+			uniqueCount++; // increment unique category counter
+		}
+	}
+	
+	return uniqueCount; // return the number of unique categories found
+}
+
+// MARCOS MELO: Function to build filename from category name.
+void buildFilename(char filename[], char category[]) {
+	int i = 0; // index for processing characters
+	
+	// copy and convert category to lowercase for filename
+	while (category[i] != '\0') {
+		filename[i] = category[i]; // copy character
+		// convert uppercase to lowercase
+		if (filename[i] >= 'A' && filename[i] <= 'Z') filename[i] = filename[i] + 32; // convert to lowercase
+		// replace spaces with underscores
+		if (filename[i] == ' ') filename[i] = '_'; // replace space with underscore
+		i++; // move to next character
+	}
+	
+	// append "_calls.txt"
+	char suffix[] = "_calls.txt";
+	int j = 0; // index for suffix
+	
+	while (suffix[j] != '\0') {
+		filename[i] = suffix[j]; // copy suffix character
+		i++; // move to next position
+		j++; // move to next suffix character
+	}
+	
+	filename[i] = '\0'; // add null terminator
+}
+
+// MARCOS MELO: Function to save Calls to Action by category to a new file.
+void saveCategoryToFile(struct fileContents list[], int count) {
+	char uniqueCategories[MAX_ITEMS][20]; // array to store unique categories
+	int uniqueCount = 0; // counter for unique categories
+	int categoryChoice; // variable for user's category selection
+	char filename[50]; // variable to store the output filename
+	int found = 0; // counter for matching records found
+	
+	// extract unique categories from the list using helper function
+	uniqueCount = extractUniqueCategories(list, count, uniqueCategories);
+	
+	// display category menu to user
+	printf("\nAvailable Categories:\n");
+	for (int i = 0; i < uniqueCount; i++) {
+		printf("%d. %s\n", i + 1, uniqueCategories[i]); // display each category with number
+	}
+	
+	printf("Enter category number to save: "); // prompt user for selection
+	scanf("%d", &categoryChoice); // read user's choice
+	
+	// validate user input and process if valid
+	if (categoryChoice >= 1 && categoryChoice <= uniqueCount) {
+		// build filename using helper function
+		buildFilename(filename, uniqueCategories[categoryChoice - 1]);
+		
+		FILE* fp = fopen(filename, "w"); // open file for writing
+		
+		if (fp != NULL) { // check if file opened successfully
+			// loop through all records to find matching category
+			for (int n = 0; n < count; n++) {
+				if (compareStrings(list[n].category, uniqueCategories[categoryChoice - 1]) == 1) { // use helper function to compare
+					fprintf(fp, "%d|%s|%s\n", list[n].number, list[n].category, list[n].description); // write matching record to file
+					found++; // increment counter for each match
+				}
+			}
+			
+			fclose(fp); // close the file after writing
+			
+			printf("%d Calls to Action saved to %s\n", found, filename); // confirm successful save
+		}
+
+		if (fp == NULL) printf("Error creating file.\n"); // check if file opening failed
+	} else {
+		printf("Invalid category selection.\n"); // error message for invalid choice
 	}
 }
