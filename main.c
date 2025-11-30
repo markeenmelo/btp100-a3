@@ -61,7 +61,7 @@ int main() { // begins the program
 	return 0; // returns 0 to say the program executed successfully
 }
 
-// Marcos Melo. Displays all calls to action in a table format.
+// TYLER: Displays all calls to action in a table format.
 void displayAll(struct FileStruct list[], int fileContentSize) { // display all function that returns void, takes a struct of datatype fileContent and count for running
 	// Print header
 	printf("\nAll Calls to Action:\n");
@@ -109,7 +109,7 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 	}
 }
 
-// MARCOS MELO: Function to save Calls to Action by category to a new file.
+// MARCOS MELO: function to save Calls to Action by category to a new file.
 void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 	char uniqueCategories[MAX_ITEMS][20]; // array to store unique categories
 	int uniqueCount = 0; // counter for unique categories
