@@ -16,6 +16,7 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCO
 // helper functions
 void loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
 int caseInsensitiveStringsCompare(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings case-insensitive
+void trimWhitespace(char str[]); // MARCOS MELO: prototype to trim leading/trailing whitespace
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
 void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype to build filename from category
 
@@ -73,6 +74,8 @@ void loadFileContent(struct FileStruct fileContent[], int maxItems) {
 	FILE* fp = fopen("calls_to_action.txt", "r");
 	if (fp == NULL) printf("Error opening file.\n");
 	while (local_count < maxItems && fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[local_count].number, fileContent[local_count].category, fileContent[local_count].description) == 3) {
+		trimWhitespace(fileContent[local_count].category); // trim whitespace from category
+		trimWhitespace(fileContent[local_count].description); // trim whitespace from description
 		local_count++;
 	}
 	fclose(fp);
@@ -98,6 +101,35 @@ int caseInsensitiveStringsCompare(char str1[], char str2[]) {
 	}
 	
 	return 0; // return 0 if match, 1 if different
+}
+
+// MARCOS MELO: Function to trim leading and trailing whitespace from string.
+void trimWhitespace(char str[]) {
+	int i = 0;
+	int start = 0;
+	int end = 0;
+	
+	// find first non-whitespace character
+	while (str[i] == ' ' || str[i] == '\n') {
+		i++;
+	}
+	start = i;
+	
+	// find last non-whitespace character
+	i = 0;
+	while (str[i] != '\0') {
+		if (str[i] != ' ' && str[i] != '\n') {
+			end = i;
+		}
+		i++;
+	}
+	
+	// move trimmed part to beginning of string
+	for (i = 0; start <= end; i++, start++) {
+		str[i] = str[start];
+	}
+	
+	str[i] = '\0'; // add null terminator
 }
 
 // MARCOS MELO: Function to extract unique categories from the list.
