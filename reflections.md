@@ -1,0 +1,3 @@
+# Reflection on Truth and Reconciliation Calls to Action
+
+Understanding the Truth and Reconciliation Calls to Action has significantly enhanced my knowledge of Indigenous issues in Canada. Through this assignment, I learned about the historical injustices faced by Indigenous communities, including the residential school system and ongoing disparities in child welfare, education, health, and justice. The calls highlight the need for meaningful reconciliation, such as implementing Jordan's Principle and preserving Indigenous languages. This experience has made me more aware of the importance of cultural sensitivity and government accountability in addressing these systemic issues, fostering a deeper appreciation for Canada's path toward healing and equality.
