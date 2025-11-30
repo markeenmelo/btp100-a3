@@ -61,14 +61,14 @@ int main() { // begins the program
 	return 0; // returns 0 to say the program executed successfully
 }
 
-// Marcos Melo. Displays all calls to action in a spreadsheet format.
+// Marcos Melo. Displays all calls to action in a table format.
 void displayAll(struct FileStruct list[], int fileContentSize) { // display all function that returns void, takes a struct of datatype fileContent and count for running
 	// Print header
 	printf("\nAll Calls to Action:\n");
-	printf("| %-6s | %-15s | %-60s |\n", "Number", "Category", "Description");
-	printf("+--------+-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
+	printf("| %-6s | %-15s | %s\n", "Number", "Category", "Description");
+	printf("+--------+-----------------+--------------------------------+\n");
 	for (int i = 0; i < fileContentSize; i++) { // for loop that prints all the record's numbers and calls to actions
-		printf("| %-6d | %-15s | %-60s |\n", list[i].number, list[i].category, list[i].description); // prints the record number, category, and description in columns
+		printf("| %-6d | %-15s | %s\n", list[i].number, list[i].category, list[i].description); // prints the record number, category, and full description
 	}
 	printf("\n");
 }
@@ -192,7 +192,7 @@ void buildFilename(char filename[], char category[]) {
 	filename[i] = '\0'; // add null terminator
 }
 
-// Max: Search and display all calls to action that match category.
+// Max: Search and display all calls to action that match category in table format.
 void searchByCategory(struct FileStruct list[], int fileContentSize) {
 	char searchCategory[50]; // character array to store category user searches for
 	int count = 0; // variable to count matching calls to action
@@ -204,7 +204,8 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 
 	// create header
 	printf("Calls to Action in category '%s':\n", searchCategory);
-	printf("===========================================\n");
+	printf("| %-6s | %-15s | %s\n", "Number", "Category", "Description");
+	printf("+--------+-----------------+--------------------------------+\n");
 
 	// compare category from list with user search
 	for (int i = 0; i < fileContentSize; i++) {
@@ -213,11 +214,8 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 			// if find match, increase counter
 			count++;
 
-			// display the matching call to action
-			printf("Call to Action #%d\n", list[i].number);
-			printf("Category: %s\n", list[i].category);
-			printf("Description: %s\n", list[i].description);
-			printf("-------------------------------------------\n");
+			// display the matching call to action in table row
+			printf("| %-6d | %-15s | %s\n", list[i].number, list[i].category, list[i].description);
 		}
 	}
 
