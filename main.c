@@ -73,6 +73,89 @@ void displayAll(struct FileStruct list[], int fileContentSize) { // display all 
 	printf("\n");
 }
 
+// Max: Search and display all calls to action that match category in table format.
+void searchByCategory(struct FileStruct list[], int fileContentSize) {
+	char searchCategory[50]; // character array to store category user searches for
+	int count = 0; // variable to count matching calls to action
+
+	// ask user to type category they want to search for
+	printf("\nEnter category to search (e.g., Child Welfare, Education, Health, Justice): ");
+	scanf(" %[^\n]", searchCategory);
+	printf("\n");
+
+	// create header
+	printf("Calls to Action in category '%s':\n", searchCategory);
+	printf("| %-6s | %-15s | %s\n", "Number", "Category", "Description");
+	printf("+--------+-----------------+--------------------------------+\n");
+
+	// compare category from list with user search
+	for (int i = 0; i < fileContentSize; i++) {
+		// use helper function to compare strings (case-insensitive)
+		if (caseInsensitiveStringsCompare(list[i].category, searchCategory) == 0) {
+			// if find match, increase counter
+			count++;
+
+			// display the matching call to action in table row
+			printf("| %-6d | %-15s | %s\n", list[i].number, list[i].category, list[i].description);
+		}
+	}
+
+	// after checking all records, if 0 match, tell the user
+	if (count == 0) {
+		printf("No Calls to Action found in category '%s'.\n", searchCategory);
+	} else {
+		// if we found matches, tell user how many
+		printf("\nTotal found: %d\n", count);
+	}
+}
+
+// MARCOS MELO: Function to save Calls to Action by category to a new file.
+void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
+	char uniqueCategories[MAX_ITEMS][20]; // array to store unique categories
+	int uniqueCount = 0; // counter for unique categories
+	int categoryChoice; // variable for user's category selection
+	char filename[50]; // variable to store the output filename
+	int found = 0; // counter for matching records found
+
+	// extract unique categories from the list using helper function
+	uniqueCount = extractUniqueCategories(list, fileContentSize, uniqueCategories);
+
+	// display category menu to user
+	printf("\nAvailable Categories:\n");
+	for (int i = 0; i < uniqueCount; i++) {
+		printf("%d. %s\n", i + 1, uniqueCategories[i]); // display each category with number
+	}
+
+	printf("Enter the number of the category to save: "); // prompt user for selection
+	scanf("%d", &categoryChoice); // read user's choice
+
+	// validate user input and process if valid
+	if (categoryChoice >= 1 && categoryChoice <= uniqueCount) {
+		// build filename using helper function
+		buildFilename(filename, uniqueCategories[categoryChoice - 1]);
+
+		FILE* fp = fopen(filename, "w"); // open file for writing
+
+		if (fp == NULL) {
+			printf("Error: Could not create file '%s'.\n", filename);
+		} else {
+			// loop through all records to find matching category
+			for (int n = 0; n < fileContentSize; n++) {
+				if (caseInsensitiveStringsCompare(list[n].category, uniqueCategories[categoryChoice - 1]) == 0) { // use helper function to compare (case-insensitive)
+					fprintf(fp, "%s\n", list[n].description); // write matching record to file
+					found++; // increment counter for each match
+				}
+			}
+
+			fclose(fp); // close the file after writing
+
+			printf("\n%d Calls to Action saved to '%s' successfully.\n", found, filename); // confirm successful save
+		}
+	} else {
+		printf("\nInvalid category selection. Please choose a number from the list.\n"); // error message for invalid choice
+	}
+}
+
 int loadFileContent(struct FileStruct fileContent[], int maxItems) {
 	int i = 0;
 	int count = 0;
@@ -190,87 +273,4 @@ void buildFilename(char filename[], char category[]) {
 	}
 	
 	filename[i] = '\0'; // add null terminator
-}
-
-// Max: Search and display all calls to action that match category in table format.
-void searchByCategory(struct FileStruct list[], int fileContentSize) {
-	char searchCategory[50]; // character array to store category user searches for
-	int count = 0; // variable to count matching calls to action
-
-	// ask user to type category they want to search for
-	printf("\nEnter category to search (e.g., Child Welfare, Education, Health, Justice): ");
-	scanf(" %[^\n]", searchCategory);
-	printf("\n");
-
-	// create header
-	printf("Calls to Action in category '%s':\n", searchCategory);
-	printf("| %-6s | %-15s | %s\n", "Number", "Category", "Description");
-	printf("+--------+-----------------+--------------------------------+\n");
-
-	// compare category from list with user search
-	for (int i = 0; i < fileContentSize; i++) {
-		// use helper function to compare strings (case-insensitive)
-		if (caseInsensitiveStringsCompare(list[i].category, searchCategory) == 0) {
-			// if find match, increase counter
-			count++;
-
-			// display the matching call to action in table row
-			printf("| %-6d | %-15s | %s\n", list[i].number, list[i].category, list[i].description);
-		}
-	}
-
-	// after checking all records, if 0 match, tell the user
-	if (count == 0) {
-		printf("No Calls to Action found in category '%s'.\n", searchCategory);
-	} else {
-		// if we found matches, tell user how many
-		printf("\nTotal found: %d\n", count);
-	}
-}
-
-// MARCOS MELO: Function to save Calls to Action by category to a new file.
-void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
-	char uniqueCategories[MAX_ITEMS][20]; // array to store unique categories
-	int uniqueCount = 0; // counter for unique categories
-	int categoryChoice; // variable for user's category selection
-	char filename[50]; // variable to store the output filename
-	int found = 0; // counter for matching records found
-
-	// extract unique categories from the list using helper function
-	uniqueCount = extractUniqueCategories(list, fileContentSize, uniqueCategories);
-
-	// display category menu to user
-	printf("\nAvailable Categories:\n");
-	for (int i = 0; i < uniqueCount; i++) {
-		printf("%d. %s\n", i + 1, uniqueCategories[i]); // display each category with number
-	}
-
-	printf("Enter the number of the category to save: "); // prompt user for selection
-	scanf("%d", &categoryChoice); // read user's choice
-
-	// validate user input and process if valid
-	if (categoryChoice >= 1 && categoryChoice <= uniqueCount) {
-		// build filename using helper function
-		buildFilename(filename, uniqueCategories[categoryChoice - 1]);
-
-		FILE* fp = fopen(filename, "w"); // open file for writing
-
-		if (fp == NULL) {
-			printf("Error: Could not create file '%s'.\n", filename);
-		} else {
-			// loop through all records to find matching category
-			for (int n = 0; n < fileContentSize; n++) {
-				if (caseInsensitiveStringsCompare(list[n].category, uniqueCategories[categoryChoice - 1]) == 0) { // use helper function to compare (case-insensitive)
-					fprintf(fp, "%s\n", list[n].description); // write matching record to file
-					found++; // increment counter for each match
-				}
-			}
-
-			fclose(fp); // close the file after writing
-
-			printf("\n%d Calls to Action saved to '%s' successfully.\n", found, filename); // confirm successful save
-		}
-	} else {
-		printf("\nInvalid category selection. Please choose a number from the list.\n"); // error message for invalid choice
-	}
 }
