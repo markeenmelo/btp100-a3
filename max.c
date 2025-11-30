@@ -32,16 +32,6 @@ void searchByCategory() {
     printf("Calls to Action in category '%s':\n", searchCategory);
     printf("===========================================\n");
     
-    // Max: Loop through file and read one line at a time
-    while (fgets(line, sizeof(line), file) != NULL) {
-        // Max: Create variables to store the different parts of line
-        char number[10];
-        char category[50];
-        char description[400];
-        
-        // Max: Use sscanf to split line into 3 parts separated by |
-        sscanf(line, "%[^|]|%[^|]|%[^\n]", number, category, description);
-        
      // Max: Compare  category from  file with user search
     while (fscanf(file, "%d|%[^|]|%[^\n]\n", &number, category, description) == 3) {
         // Max: strcmp returns 0 if the strings are exactly the same
