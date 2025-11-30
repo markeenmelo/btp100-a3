@@ -2,9 +2,11 @@
 void searchByCategory() {
     // Max: Declare variable to hold the file pointer 
     FILE *file;
-    
-    // Max: Create character array to store each line we read from  file 
-    char line[500];
+
+     // Max: Create variables store 
+    int number;
+    char category[50];
+    char description[400];
     
     // Max: Create character array to store category user searches for
     char searchCategory[50];
@@ -32,30 +34,20 @@ void searchByCategory() {
     printf("Calls to Action in category '%s':\n", searchCategory);
     printf("===========================================\n");
     
-    // Max: Loop through file and read one line at a time
-    while (fgets(line, sizeof(line), file) != NULL) {
-        // Max: Create variables to store the different parts of line
-        char number[10];
-        char category[50];
-        char description[400];
-        
-        // Max: Use sscanf to split line into 3 parts separated by |
-        sscanf(line, "%[^|]|%[^|]|%[^\n]", number, category, description);
-        
-        // Max: Compare category from file with what user searched for
-        // Max: strcmp returns 0 if strings are exactly the same 
+     // Max: Compare  category from  file with user search
+    while (fscanf(file, "%d|%[^|]|%[^\n]\n", &number, category, description) == 3) {
+        // Max: strcmp returns 0 if the strings are exactly the same
         if (strcmp(category, searchCategory) == 0) {
-            // Max: Find match, increase counter
+            // Max: If find match, increase counter
             count++;
-            
-            // Max: Display the matching call to action 
-            printf("Call to Action #%s\n", number);
+
+            // Max: Display the matching call to action
+            printf("Call to Action #%d\n", number);
             printf("Category: %s\n", category);
             printf("Description: %s\n", description);
             printf("-------------------------------------------\n");
         }
     }
-    
     // Max: After checking all lines, if 0 match, tell the user
     if (count == 0) {
         printf("No Calls to Action found in category '%s'.\n", searchCategory);
