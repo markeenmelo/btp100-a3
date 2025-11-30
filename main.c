@@ -10,10 +10,11 @@ struct FileStruct { // struct for content analysis
 };
 
 void displayAll(struct FileStruct list[], int fileContentSize); // TYLER: prototype for display all function
+void searchByCategory(struct FileStruct list[], int fileContentSize); // MAX: prototype for search by category function
 void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCOS MELO: prototype for save category to file function
 
 // helper functions
-void loadFileContent(struct FileStruct fileContent[], int maxItems);
+void loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
 int compareStrings(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings
 void copyString(char dest[], char src[]); // MARCOS MELO: prototype to copy string from src to dest
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
@@ -39,6 +40,7 @@ int main() { // begins the program
 			displayAll(fileContent, fileContentSize); // calls the display all function and gives the function list and count value for running
 			break;  // breaks the switch case when code above completes
 		case 2:
+			searchByCategory(fileContent, fileContentSize);
 			break;
 		case 3:
 			printf("Total Calls to Action: %d\n", fileContentSize); // prints the total calls to action
@@ -151,6 +153,44 @@ void buildFilename(char filename[], char category[]) {
 	}
 	
 	filename[i] = '\0'; // add null terminator
+}
+
+// Max: Search and display all calls to action that match category.
+void searchByCategory(struct FileStruct list[], int fileContentSize) {
+	char searchCategory[50]; // character array to store category user searches for
+	int count = 0; // variable to count matching calls to action
+	
+	// ask user to type category they want to search for
+	printf("Enter category to search (Child Welfare, Education, Health, Justice): ");
+	scanf(" %[^\n]", searchCategory);
+	printf("\n");
+	
+	// create header
+	printf("Calls to Action in category '%s':\n", searchCategory);
+	printf("===========================================\n");
+	
+	// compare category from list with user search
+	for (int i = 0; i < fileContentSize; i++) {
+		// use helper function to compare strings
+		if (compareStrings(list[i].category, searchCategory) == 1) {
+			// if find match, increase counter
+			count++;
+			
+			// display the matching call to action
+			printf("Call to Action #%d\n", list[i].number);
+			printf("Category: %s\n", list[i].category);
+			printf("Description: %s\n", list[i].description);
+			printf("-------------------------------------------\n");
+		}
+	}
+	
+	// after checking all records, if 0 match, tell the user
+	if (count == 0) {
+		printf("No Calls to Action found in category '%s'.\n", searchCategory);
+	} else {
+		// if we found matches, tell user how many
+		printf("\nTotal found: %d\n", count);
+	}
 }
 
 // MARCOS MELO: Function to save Calls to Action by category to a new file.
