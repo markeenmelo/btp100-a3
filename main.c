@@ -180,7 +180,7 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 			// loop through all records to find matching category
 			for (int n = 0; n < fileContentSize; n++) {
 				if (compareStrings(list[n].category, uniqueCategories[categoryChoice - 1]) == 1) { // use helper function to compare
-					fprintf(fp, "%d|%s|%s\n", list[n].number, list[n].category, list[n].description); // write matching record to file
+					fprintf(fp, "%s\n", list[n].description); // write matching record to file
 					found++; // increment counter for each match
 				}
 			}
