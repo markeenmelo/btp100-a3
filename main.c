@@ -28,14 +28,15 @@ int main() { // begins the program
 	if (fileContentSize > 0) {
 		int choice; // choice variable for switch
 		do { // do while loop to keep the program going until the user enters 5 to exit
+			printf("\n--- Truth and Reconciliation Calls to Action Menu ---\n");
 			printf("1. Display all Calls to Action\n");
 			printf("2. Search Calls to Action by category\n");
 			printf("3. Display total number of Calls to Action\n");
 			printf("4. Save Calls to Action by category to a new file\n");
 			printf("5. Exit\n");
-			printf("Enter choice: ");
-			scanf("%d", &choice); // scans the users choice  
-			switch (choice) { // switch cases for users selection 
+			printf("Enter your choice (1-5): ");
+			scanf("%d", &choice); // scans the users choice
+			switch (choice) { // switch cases for users selection
 			case 1:
 				displayAll(fileContent, fileContentSize); // calls the display all function and gives the function list and count value for running
 				break;  // breaks the switch case when code above completes
@@ -43,18 +44,18 @@ int main() { // begins the program
 				searchByCategory(fileContent, fileContentSize);
 				break;
 			case 3:
-				printf("Total Calls to Action: %d\n", fileContentSize); // prints the total calls to action
+				printf("\nTotal number of Calls to Action: %d\n", fileContentSize); // prints the total calls to action
 				break; // breaks the switch case when code above completes
 			case 4:
 				saveCategoryToFile(fileContent, fileContentSize); // calls the save category to file function
 				break;
 			case 5:
-				printf("Thank you for using our program\n\n"); // case for when the user wants to exit
+				printf("\nThank you for using the Truth and Reconciliation Calls to Action program!\n"); // case for when the user wants to exit
 				break; // breaks the switch case when code above completes
 			default:
-				printf("Invalid choice, please try again\n"); // default choice for when the user enters an invalid choice
+				printf("\nInvalid choice. Please enter a number between 1 and 5.\n"); // default choice for when the user enters an invalid choice
 			}
-		} while (choice != 5); // condition of do/while loop to know when to stop the loop and exit 
+		} while (choice != 5); // condition of do/while loop to know when to stop the loop and exit
 	}
 
 	return 0; // returns 0 to say the program executed successfully
@@ -63,11 +64,13 @@ int main() { // begins the program
 // Marcos Melo. Displays all calls to action in a spreadsheet format.
 void displayAll(struct FileStruct list[], int fileContentSize) { // display all function that returns void, takes a struct of datatype fileContent and count for running
 	// Print header
+	printf("\nAll Calls to Action:\n");
 	printf("| %-6s | %-15s | %-60s |\n", "Number", "Category", "Description");
 	printf("+--------+-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
 	for (int i = 0; i < fileContentSize; i++) { // for loop that prints all the record's numbers and calls to actions
 		printf("| %-6d | %-15s | %-60s |\n", list[i].number, list[i].category, list[i].description); // prints the record number, category, and description in columns
 	}
+	printf("\n");
 }
 
 int loadFileContent(struct FileStruct fileContent[], int maxItems) {
@@ -75,8 +78,7 @@ int loadFileContent(struct FileStruct fileContent[], int maxItems) {
 	int count = 0;
 	FILE* fp = fopen("calls_to_action.txt", "r");
 	if (fp == NULL) {
-		printf("Error: Could not open 'calls_to_action.txt' file.\n");
-		printf("Please ensure the file exists in the same directory as the program.\n");
+		printf("Error: Unable to open 'calls_to_action.txt'. Please ensure the file exists in the current directory.\n");
 		return 0; // return 0 if file not found
 	}
 	while (i < maxItems && fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[i].number, fileContent[i].category, fileContent[i].description) == 3) {
@@ -194,23 +196,23 @@ void buildFilename(char filename[], char category[]) {
 void searchByCategory(struct FileStruct list[], int fileContentSize) {
 	char searchCategory[50]; // character array to store category user searches for
 	int count = 0; // variable to count matching calls to action
-	
+
 	// ask user to type category they want to search for
-	printf("Enter category to search (Child Welfare, Education, Health, Justice): ");
+	printf("\nEnter category to search (e.g., Child Welfare, Education, Health, Justice): ");
 	scanf(" %[^\n]", searchCategory);
 	printf("\n");
-	
+
 	// create header
 	printf("Calls to Action in category '%s':\n", searchCategory);
 	printf("===========================================\n");
-	
+
 	// compare category from list with user search
 	for (int i = 0; i < fileContentSize; i++) {
 		// use helper function to compare strings (case-insensitive)
 		if (caseInsensitiveStringsCompare(list[i].category, searchCategory) == 0) {
 			// if find match, increase counter
 			count++;
-			
+
 			// display the matching call to action
 			printf("Call to Action #%d\n", list[i].number);
 			printf("Category: %s\n", list[i].category);
@@ -218,7 +220,7 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 			printf("-------------------------------------------\n");
 		}
 	}
-	
+
 	// after checking all records, if 0 match, tell the user
 	if (count == 0) {
 		printf("No Calls to Action found in category '%s'.\n", searchCategory);
@@ -235,28 +237,28 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 	int categoryChoice; // variable for user's category selection
 	char filename[50]; // variable to store the output filename
 	int found = 0; // counter for matching records found
-	
+
 	// extract unique categories from the list using helper function
 	uniqueCount = extractUniqueCategories(list, fileContentSize, uniqueCategories);
-	
+
 	// display category menu to user
 	printf("\nAvailable Categories:\n");
 	for (int i = 0; i < uniqueCount; i++) {
 		printf("%d. %s\n", i + 1, uniqueCategories[i]); // display each category with number
 	}
-	
-	printf("Enter category number to save: "); // prompt user for selection
+
+	printf("Enter the number of the category to save: "); // prompt user for selection
 	scanf("%d", &categoryChoice); // read user's choice
-	
+
 	// validate user input and process if valid
 	if (categoryChoice >= 1 && categoryChoice <= uniqueCount) {
 		// build filename using helper function
 		buildFilename(filename, uniqueCategories[categoryChoice - 1]);
-		
+
 		FILE* fp = fopen(filename, "w"); // open file for writing
-		
-if (fp == NULL) {
-	printf("Error: Could not create file '%s'.\n", filename);
+
+		if (fp == NULL) {
+			printf("Error: Could not create file '%s'.\n", filename);
 		} else {
 			// loop through all records to find matching category
 			for (int n = 0; n < fileContentSize; n++) {
@@ -265,12 +267,12 @@ if (fp == NULL) {
 					found++; // increment counter for each match
 				}
 			}
-			
+
 			fclose(fp); // close the file after writing
-			
-			printf("%d Calls to Action saved to %s\n", found, filename); // confirm successful save
+
+			printf("\n%d Calls to Action saved to '%s' successfully.\n", found, filename); // confirm successful save
 		}
 	} else {
-		printf("Invalid category selection.\n"); // error message for invalid choice
+		printf("\nInvalid category selection. Please choose a number from the list.\n"); // error message for invalid choice
 	}
 }
