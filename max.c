@@ -47,7 +47,7 @@ void searchByCategory() {
             printf("Description: %s\n", description);
             printf("-------------------------------------------\n");
         }
-    
+    }
     // Max: After checking all lines, if 0 match, tell the user
     if (count == 0) {
         printf("No Calls to Action found in category '%s'.\n", searchCategory);
