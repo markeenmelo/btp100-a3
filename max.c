@@ -2,9 +2,11 @@
 void searchByCategory() {
     // Max: Declare variable to hold the file pointer 
     FILE *file;
-    
-    // Max: Create character array to store each line we read from  file 
-    char line[500];
+
+     // Max: Create variables store 
+    int number;
+    char category[50];
+    char description[400];
     
     // Max: Create character array to store category user searches for
     char searchCategory[50];
