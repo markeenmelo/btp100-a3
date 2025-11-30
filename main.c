@@ -15,6 +15,7 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCO
 
 // helper functions
 void loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
+int caseInsensitiveStringsCompare(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings case-insensitive
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
 void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype to build filename from category
 
@@ -79,6 +80,26 @@ void loadFileContent(struct FileStruct fileContent[], int maxItems) {
 
 
 
+// MARCOS MELO: Function to compare two strings case-insensitive, returns 0 if equal.
+int caseInsensitiveStringsCompare(char str1[], char str2[]) {
+	int i = 0; // index for character comparison
+	
+	// compare strings character by character (case-insensitive)
+	while (str1[i] != '\0' || str2[i] != '\0') {
+		char c1 = str1[i];
+		char c2 = str2[i];
+		
+		// convert both to lowercase for comparison
+		if (c1 >= 'A' && c1 <= 'Z') c1 = c1 + 32;
+		if (c2 >= 'A' && c2 <= 'Z') c2 = c2 + 32;
+		
+		if (c1 != c2) return 1; // strings don't match
+		i++; // move to next character
+	}
+	
+	return 0; // return 0 if match, 1 if different
+}
+
 // MARCOS MELO: Function to extract unique categories from the list.
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]) {
 	int uniqueCount = 0; // counter for unique categories
@@ -87,9 +108,9 @@ int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char 
 	for (int i = 0; i < fileContentSize; i++) {
 		int isDuplicate = 0; // flag to check if category already exists
 		
-		// check if category already in unique list
+		// check if category already in unique list (case-insensitive)
 		for (int j = 0; j < uniqueCount; j++) {
-			if (strcmp(list[i].category, uniqueCategories[j]) == 0) isDuplicate = 1; // category already exists
+			if (caseInsensitiveStringsCompare(list[i].category, uniqueCategories[j]) == 0) isDuplicate = 1; // category already exists
 		}
 		
 		// if not duplicate, add to unique categories
@@ -145,8 +166,8 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 	
 	// compare category from list with user search
 	for (int i = 0; i < fileContentSize; i++) {
-		// use helper function to compare strings
-		if (strcmp(list[i].category, searchCategory) == 0) {
+		// use helper function to compare strings (case-insensitive)
+		if (caseInsensitiveStringsCompare(list[i].category, searchCategory) == 0) {
 			// if find match, increase counter
 			count++;
 			
@@ -197,7 +218,7 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 		if (fp != NULL) { // check if file opened successfully
 			// loop through all records to find matching category
 			for (int n = 0; n < fileContentSize; n++) {
-				if (strcmp(list[n].category, uniqueCategories[categoryChoice - 1]) == 0) { // use helper function to compare
+				if (caseInsensitiveStringsCompare(list[n].category, uniqueCategories[categoryChoice - 1]) == 0) { // use helper function to compare (case-insensitive)
 					fprintf(fp, "%s\n", list[n].description); // write matching record to file
 					found++; // increment counter for each match
 				}
