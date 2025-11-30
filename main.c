@@ -14,7 +14,7 @@ void searchByCategory(struct FileStruct list[], int fileContentSize); // MAX: pr
 void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCOS MELO: prototype for save category to file function
 
 // helper functions
-void loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
+int loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
 int caseInsensitiveStringsCompare(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings case-insensitive
 void trimWhitespace(char str[]); // MARCOS MELO: prototype to trim leading/trailing whitespace
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
@@ -23,18 +23,9 @@ void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype 
 int main() { // begins the program
 	struct FileStruct fileContent[MAX_ITEMS]; // creates a struct array of data type FileStruct and has max items as the size
 
-	loadFileContent(fileContent, MAX_ITEMS);
-	int fileContentSize = 0; // count actual records loaded
-	
-	// count how many records were actually loaded
-	for (int i = 0; i < MAX_ITEMS; i++) {
-		if (fileContent[i].number != 0) fileContentSize++; // assuming 0 is not a valid record number
-	}
-	
-	// if no records loaded, set flag to skip menu
-	int dataLoaded = fileContentSize > 0;
+	int fileContentSize = loadFileContent(fileContent, MAX_ITEMS);
 
-	if (dataLoaded) {
+	if (fileContentSize > 0) {
 		int choice; // choice variable for switch
 		do { // do while loop to keep the program going until the user enters 5 to exit
 			printf("1. Display all Calls to Action\n");
@@ -79,20 +70,23 @@ void displayAll(struct FileStruct list[], int fileContentSize) { // display all 
 	}
 }
 
-void loadFileContent(struct FileStruct fileContent[], int maxItems) {
-	int local_count = 0;
+int loadFileContent(struct FileStruct fileContent[], int maxItems) {
+	int i = 0;
+	int count = 0;
 	FILE* fp = fopen("calls_to_action.txt", "r");
 	if (fp == NULL) {
 		printf("Error: Could not open 'calls_to_action.txt' file.\n");
 		printf("Please ensure the file exists in the same directory as the program.\n");
-		return; // return without loading data
+		return 0; // return 0 if file not found
 	}
-	while (local_count < maxItems && fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[local_count].number, fileContent[local_count].category, fileContent[local_count].description) == 3) {
-		trimWhitespace(fileContent[local_count].category); // trim whitespace from category
-		trimWhitespace(fileContent[local_count].description); // trim whitespace from description
-		local_count++;
+	while (i < maxItems && fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[i].number, fileContent[i].category, fileContent[i].description) == 3) {
+		trimWhitespace(fileContent[i].category); // trim whitespace from category
+		trimWhitespace(fileContent[i].description); // trim whitespace from description
+		i++;
+		count++;
 	}
 	fclose(fp);
+	return count;
 }
 
 
