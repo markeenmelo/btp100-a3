@@ -22,39 +22,49 @@ void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype 
 
 int main() { // begins the program
 	struct FileStruct fileContent[MAX_ITEMS]; // creates a struct array of data type FileStruct and has max items as the size
-	int choice; // choice variable for switch
 
 	loadFileContent(fileContent, MAX_ITEMS);
-	const int fileContentSize = sizeof(fileContent)/sizeof(fileContent[0]); // variable for counting the calls to action
+	int fileContentSize = 0; // count actual records loaded
+	
+	// count how many records were actually loaded
+	for (int i = 0; i < MAX_ITEMS; i++) {
+		if (fileContent[i].number != 0) fileContentSize++; // assuming 0 is not a valid record number
+	}
+	
+	// if no records loaded, set flag to skip menu
+	int dataLoaded = fileContentSize > 0;
 
-	do { // do while loop to keep the program going until the user enters 5 to exit
-		printf("1. Display all Calls to Action\n");
-		printf("2. Search for all Calls to Action\n");
-		printf("3. Display total number of Calls to Action\n");
-		printf("4. Save Calls to Action by category to a new file\n");
-		printf("5. Exit\n");
-		printf("Enter choice: ");
-		scanf("%d", &choice); // scans the users choice  
-		switch (choice) { // switch cases for users selection 
-		case 1:
-			displayAll(fileContent, fileContentSize); // calls the display all function and gives the function list and count value for running
-			break;  // breaks the switch case when code above completes
-		case 2:
-			searchByCategory(fileContent, fileContentSize);
-			break;
-		case 3:
-			printf("Total Calls to Action: %d\n", fileContentSize); // prints the total calls to action
-			break; // breaks the switch case when code above completes
-		case 4:
-			saveCategoryToFile(fileContent, fileContentSize); // calls the save category to file function
-			break;
-		case 5:
-			printf("Thank you for using our program\n\n"); // case for when the user wants to exit
-			break; // breaks the switch case when code above completes
-		default:
-			printf("Invalid choice, please try again\n"); // default choice for when the user enters an invalid choice
-		}
-	} while (choice != 5); // condition of do/while loop to know when to stop the loop and exit 
+	if (dataLoaded) {
+		int choice; // choice variable for switch
+		do { // do while loop to keep the program going until the user enters 5 to exit
+			printf("1. Display all Calls to Action\n");
+			printf("2. Search Calls to Action by category\n");
+			printf("3. Display total number of Calls to Action\n");
+			printf("4. Save Calls to Action by category to a new file\n");
+			printf("5. Exit\n");
+			printf("Enter choice: ");
+			scanf("%d", &choice); // scans the users choice  
+			switch (choice) { // switch cases for users selection 
+			case 1:
+				displayAll(fileContent, fileContentSize); // calls the display all function and gives the function list and count value for running
+				break;  // breaks the switch case when code above completes
+			case 2:
+				searchByCategory(fileContent, fileContentSize);
+				break;
+			case 3:
+				printf("Total Calls to Action: %d\n", fileContentSize); // prints the total calls to action
+				break; // breaks the switch case when code above completes
+			case 4:
+				saveCategoryToFile(fileContent, fileContentSize); // calls the save category to file function
+				break;
+			case 5:
+				printf("Thank you for using our program\n\n"); // case for when the user wants to exit
+				break; // breaks the switch case when code above completes
+			default:
+				printf("Invalid choice, please try again\n"); // default choice for when the user enters an invalid choice
+			}
+		} while (choice != 5); // condition of do/while loop to know when to stop the loop and exit 
+	}
 
 	return 0; // returns 0 to say the program executed successfully
 }
@@ -72,7 +82,11 @@ void displayAll(struct FileStruct list[], int fileContentSize) { // display all 
 void loadFileContent(struct FileStruct fileContent[], int maxItems) {
 	int local_count = 0;
 	FILE* fp = fopen("calls_to_action.txt", "r");
-	if (fp == NULL) printf("Error opening file.\n");
+	if (fp == NULL) {
+		printf("Error: Could not open 'calls_to_action.txt' file.\n");
+		printf("Please ensure the file exists in the same directory as the program.\n");
+		return; // return without loading data
+	}
 	while (local_count < maxItems && fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[local_count].number, fileContent[local_count].category, fileContent[local_count].description) == 3) {
 		trimWhitespace(fileContent[local_count].category); // trim whitespace from category
 		trimWhitespace(fileContent[local_count].description); // trim whitespace from description
@@ -247,7 +261,9 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 		
 		FILE* fp = fopen(filename, "w"); // open file for writing
 		
-		if (fp != NULL) { // check if file opened successfully
+if (fp == NULL) {
+	printf("Error: Could not create file '%s'.\n", filename);
+		} else {
 			// loop through all records to find matching category
 			for (int n = 0; n < fileContentSize; n++) {
 				if (caseInsensitiveStringsCompare(list[n].category, uniqueCategories[categoryChoice - 1]) == 0) { // use helper function to compare (case-insensitive)
@@ -260,8 +276,6 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 			
 			printf("%d Calls to Action saved to %s\n", found, filename); // confirm successful save
 		}
-
-		if (fp == NULL) printf("Error creating file.\n"); // check if file opening failed
 	} else {
 		printf("Invalid category selection.\n"); // error message for invalid choice
 	}
