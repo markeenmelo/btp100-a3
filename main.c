@@ -9,33 +9,22 @@ struct FileStruct { // struct for content analysis
 	char description[300]; // to store the contents of calls to action
 };
 
-void displayAll(struct FileStruct list[], int count); // TYLER: prototype for display all function
-void saveCategoryToFile(struct FileStruct list[], int count); // MARCOS MELO: prototype for save category to file function
+void displayAll(struct FileStruct list[], int fileContentSize); // TYLER: prototype for display all function
+void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCOS MELO: prototype for save category to file function
 
 // helper functions
+void loadFileContent(struct FileStruct fileContent[], int maxItems);
 int compareStrings(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings
 void copyString(char dest[], char src[]); // MARCOS MELO: prototype to copy string from src to dest
-int extractUniqueCategories(struct FileStruct list[], int count, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
+int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
 void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype to build filename from category
 
 int main() { // begins the program
 	struct FileStruct fileContent[MAX_ITEMS]; // creates a struct array of data type FileStruct and has max items as the size
-	int count = 0; // variable for counting the calls to action
 	int choice; // choice variable for switch
 
-	FILE* fp = NULL; //  declares fp variable for file opening
-	fp = fopen("calls_to_action.txt", "r"); // assigns fp to the contents of the calls to action file 
-
-	if (fp == NULL) { // checks for file opening error (file not found, bad file name, permission error 
-		printf("Error opening file.\n");
-		return 1; // returns non zero value 
-	}
-
-	while (fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[count].number, fileContent[count].category, fileContent[count].description) == 3){ // counts the amount of calls to actions
-		count++; // increments by 1 for every sucessful read
-	}
-
-	fclose(fp); // closes the file after reading and analysing
+	loadFileContent(fileContent, MAX_ITEMS);
+	const int fileContentSize = sizeof(fileContent)/sizeof(fileContent[0]); // variable for counting the calls to action
 
 	do { // do while loop to keep the program going until the user enters 5 to exit
 		printf("1. Display all Calls to Action\n");
@@ -47,15 +36,15 @@ int main() { // begins the program
 		scanf("%d", &choice); // scans the users choice  
 		switch (choice) { // switch cases for users selection 
 		case 1:
-			displayAll(fileContent, count); // calls the display all function and gives the function list and count value for running
+			displayAll(fileContent, fileContentSize); // calls the display all function and gives the function list and count value for running
 			break;  // breaks the switch case when code above completes
 		case 2:
 			break;
 		case 3:
-			printf("Total Calls to Action: %d\n", count); // prints the total calls to action
+			printf("Total Calls to Action: %d\n", fileContentSize); // prints the total calls to action
 			break; // breaks the switch case when code above completes
 		case 4:
-			saveCategoryToFile(fileContent, count); // calls the save category to file function
+			saveCategoryToFile(fileContent, fileContentSize); // calls the save category to file function
 			break;
 		case 5:
 			printf("Thank you for using our program\n\n"); // case for when the user wants to exit
@@ -68,10 +57,20 @@ int main() { // begins the program
 	return 0; // returns 0 to say the program executed successfully
 }
 
-void displayAll(struct FileStruct list[], int count) { // display all function that returns void, takes a struct of datatype fileContent and count for running
-	for (int i = 0; i < count; i++) { // for loop that prints all the record's numbers and calls to actions
+void displayAll(struct FileStruct list[], int fileContentSize) { // display all function that returns void, takes a struct of datatype fileContent and count for running
+	for (int i = 0; i < fileContentSize; i++) { // for loop that prints all the record's numbers and calls to actions
 		printf("Record %d: %s\n\n", list[i].number,  list[i].description); // prints the record number and calls to action content
 	}
+}
+
+void loadFileContent(struct FileStruct fileContent[], int maxItems) {
+	int local_count = 0;
+	FILE* fp = fopen("calls_to_action.txt", "r");
+	if (fp == NULL) printf("Error opening file.\n");
+	while (local_count < maxItems && fscanf(fp, "%d|%19[^|]|%299[^\n]%*c", &fileContent[local_count].number, fileContent[local_count].category, fileContent[local_count].description) == 3) {
+		local_count++;
+	}
+	fclose(fp);
 }
 
 // MARCOS MELO: Function to compare two strings manually, returns 1 if equal, 0 if different.
@@ -101,11 +100,11 @@ void copyString(char dest[], char src[]) {
 }
 
 // MARCOS MELO: Function to extract unique categories from the list.
-int extractUniqueCategories(struct FileStruct list[], int count, char uniqueCategories[][20]) {
+int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]) {
 	int uniqueCount = 0; // counter for unique categories
 	
 	// loop through all records to find unique categories
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < fileContentSize; i++) {
 		int isDuplicate = 0; // flag to check if category already exists
 		
 		// check if category already in unique list
@@ -151,7 +150,7 @@ void buildFilename(char filename[], char category[]) {
 }
 
 // MARCOS MELO: Function to save Calls to Action by category to a new file.
-void saveCategoryToFile(struct FileStruct list[], int count) {
+void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 	char uniqueCategories[MAX_ITEMS][20]; // array to store unique categories
 	int uniqueCount = 0; // counter for unique categories
 	int categoryChoice; // variable for user's category selection
@@ -159,7 +158,7 @@ void saveCategoryToFile(struct FileStruct list[], int count) {
 	int found = 0; // counter for matching records found
 	
 	// extract unique categories from the list using helper function
-	uniqueCount = extractUniqueCategories(list, count, uniqueCategories);
+	uniqueCount = extractUniqueCategories(list, fileContentSize, uniqueCategories);
 	
 	// display category menu to user
 	printf("\nAvailable Categories:\n");
@@ -179,7 +178,7 @@ void saveCategoryToFile(struct FileStruct list[], int count) {
 		
 		if (fp != NULL) { // check if file opened successfully
 			// loop through all records to find matching category
-			for (int n = 0; n < count; n++) {
+			for (int n = 0; n < fileContentSize; n++) {
 				if (compareStrings(list[n].category, uniqueCategories[categoryChoice - 1]) == 1) { // use helper function to compare
 					fprintf(fp, "%d|%s|%s\n", list[n].number, list[n].category, list[n].description); // write matching record to file
 					found++; // increment counter for each match
