@@ -15,8 +15,6 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCO
 
 // helper functions
 void loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
-int compareStrings(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings
-void copyString(char dest[], char src[]); // MARCOS MELO: prototype to copy string from src to dest
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
 void buildFilename(char filename[], char category[]); // MARCOS MELO: prototype to build filename from category
 
@@ -79,31 +77,7 @@ void loadFileContent(struct FileStruct fileContent[], int maxItems) {
 	fclose(fp);
 }
 
-// MARCOS MELO: Function to compare two strings manually, returns 1 if equal, 0 if different.
-int compareStrings(char str1[], char str2[]) {
-	int i = 0; // index for character comparison
-	int match = 1; // assume strings match initially
-	
-	// compare strings character by character
-	while (str1[i] != '\0' || str2[i] != '\0') {
-		if (str1[i] != str2[i]) match = 0; // strings don't match
-		i++; // move to next character
-	}
-	
-	return match; // return 1 if match, 0 if different
-}
 
-// MARCOS MELO: Function to copy string from src to dest manually.
-void copyString(char dest[], char src[]) {
-	int i = 0; // index for copying characters
-	
-	// copy each character from source to destination
-	while (src[i] != '\0') {
-		dest[i] = src[i]; // copy character
-		i++; // move to next character
-	}
-	dest[i] = '\0'; // add null terminator
-}
 
 // MARCOS MELO: Function to extract unique categories from the list.
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]) {
@@ -115,12 +89,12 @@ int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char 
 		
 		// check if category already in unique list
 		for (int j = 0; j < uniqueCount; j++) {
-			if (compareStrings(list[i].category, uniqueCategories[j]) == 1) isDuplicate = 1; // category already exists
+			if (strcmp(list[i].category, uniqueCategories[j]) == 0) isDuplicate = 1; // category already exists
 		}
 		
 		// if not duplicate, add to unique categories
 		if (isDuplicate == 0) {
-			copyString(uniqueCategories[uniqueCount], list[i].category); // copy category to unique list
+			strcpy(uniqueCategories[uniqueCount], list[i].category); // copy category to unique list
 			uniqueCount++; // increment unique category counter
 		}
 	}
@@ -172,7 +146,7 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 	// compare category from list with user search
 	for (int i = 0; i < fileContentSize; i++) {
 		// use helper function to compare strings
-		if (compareStrings(list[i].category, searchCategory) == 1) {
+		if (strcmp(list[i].category, searchCategory) == 0) {
 			// if find match, increase counter
 			count++;
 			
@@ -223,7 +197,7 @@ void saveCategoryToFile(struct FileStruct list[], int fileContentSize) {
 		if (fp != NULL) { // check if file opened successfully
 			// loop through all records to find matching category
 			for (int n = 0; n < fileContentSize; n++) {
-				if (compareStrings(list[n].category, uniqueCategories[categoryChoice - 1]) == 1) { // use helper function to compare
+				if (strcmp(list[n].category, uniqueCategories[categoryChoice - 1]) == 0) { // use helper function to compare
 					fprintf(fp, "%s\n", list[n].description); // write matching record to file
 					found++; // increment counter for each match
 				}
