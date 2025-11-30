@@ -57,9 +57,13 @@ int main() { // begins the program
 	return 0; // returns 0 to say the program executed successfully
 }
 
+// Marcos Melo. Displays all calls to action in a spreadsheet format.
 void displayAll(struct FileStruct list[], int fileContentSize) { // display all function that returns void, takes a struct of datatype fileContent and count for running
+	// Print header
+	printf("| %-6s | %-15s | %-60s |\n", "Number", "Category", "Description");
+	printf("+--------+-----------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
 	for (int i = 0; i < fileContentSize; i++) { // for loop that prints all the record's numbers and calls to actions
-		printf("Record %d: %s\n\n", list[i].number,  list[i].description); // prints the record number and calls to action content
+		printf("| %-6d | %-15s | %-60s |\n", list[i].number, list[i].category, list[i].description); // prints the record number, category, and description in columns
 	}
 }
 
