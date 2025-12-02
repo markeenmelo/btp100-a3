@@ -79,9 +79,9 @@ The program uses a structured approach to data management:
 
 ```c
 struct FileStruct {
-    int number;           // Call to Action number
-    char category[20];    // Category name (Child Welfare, Education, etc.)
-    char description[300]; // Full description text
+    int number;
+    char category[20];
+    char description[300];
 };
 ```
 
@@ -182,42 +182,6 @@ main()
 ```
 
 ## Memory Layout and Data Processing
-
-### Memory Allocation Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    MEMORY MAP                               │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │              STACK MEMORY                           │    │
-│  │                                                     │    │
-│  │  ┌─────────────┐  ┌─────────────┐                   │    │
-│  │  │ main()      │  │ Functions   │                   │    │
-│  │  │ variables   │  │ local vars  │                   │    │
-│  │  │             │  │             │                   │    │
-│  │  │ fileContent │  │ searchCat   │                   │    │
-│  │  │ [10 structs]│  │ filename    │                   │    │
-│  │  │ choice      │  │ buffers     │                   │    │
-│  │  └─────────────┘  └─────────────┘                   │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │              STATIC DATA                            │    │
-│  │                                                     │    │
-│  │  • String literals                                  │    │
-│  │  • Format strings                                   │    │
-│  │  • Menu text                                        │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │              HEAP (File I/O)                        │    │
-│  │                                                     │    │
-│  │  • File buffers (stdio internal)                    │    │
-│  │  • Temporary storage during file operations         │    │
-│  └─────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-```
 
 ### Data Processing Pipeline
 
@@ -327,7 +291,7 @@ void trimWhitespace(char str[]) {
 
 #### 3. Data Analysis Functions
 
-**Display All Records:**  
+**Display All Records**  
 **Developer:** Tyler
 
 ```c
@@ -342,7 +306,7 @@ void displayAll(struct FileStruct list[], int fileContentSize) {
 }
 ```
 
-**Category-Based Search:**  
+**Category-Based Search**  
 **Developer:** Max
 
 ```c
@@ -374,7 +338,7 @@ void searchByCategory(struct FileStruct list[], int fileContentSize) {
 
 #### 4. File Export System
 
-**Unique Category Extraction:**  
+**Unique Category Extraction**  
 **Developer:** Marcos Melo
 
 ```c
@@ -401,7 +365,7 @@ int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char 
 }
 ```
 
-**Dynamic Filename Generation:**  
+**Dynamic Filename Generation**  
 **Developer:** Marcos Melo
 
 ```c
