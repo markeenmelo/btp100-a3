@@ -22,6 +22,57 @@ The collaborative approach allowed for modular development, with each team membe
 
 ## Technical Architecture
 
+### Program Flow Overview
+
+```
+┌─────────────────┐
+│   Program Start │
+└─────────┬───────┘
+          │
+          ▼
+┌─────────────────┐
+│ Load File Data  │ ← calls_to_action.txt
+│ loadFileContent │
+└─────────┬───────┘
+          │
+          ▼
+┌─────────────────┐
+│ Display Menu    │
+│ (Interactive)   │
+└─────────┬───────┘
+          │
+    ┌─────┴─────┐
+    │           │
+    ▼           ▼
+┌─────────┐ ┌─────────────┐
+│ Options │ │ Exit (5)    │
+│ 1-4     │ └─────────────┘
+└─────┬───┘
+      │
+  ┌───┴─────────────────────────────────────┐
+  │           Menu Options                  │
+  ├─────────┬─────────┬─────────┬───────────┤
+  │   1     │    2    │    3    │     4     │
+  ├─────────┼─────────┼─────────┼───────────┤
+  │Display  │Search   │Count    │Save to    │
+  │All      │Category │Records  │File       │
+  └─────────┴─────────┴─────────┴───────────┘
+      │           │         │           │
+      ▼           ▼         ▼           ▼
+┌──────────┐ ┌─────────┐ ┌─────────┐ ┌────────────┐
+│displayAll│ │searchBy │ │ print   │ │saveCategory│
+│          │ │Category │ │ count   │ │toFile      │
+└──────────┘ └─────────┘ └─────────┘ └────────────┘
+      │           │         │           │
+      └───────────┴─────────┴───────────┘
+                  │
+                  ▼
+          ┌─────────────┐
+          │ Return to   │
+          │ Menu Loop   │
+          └─────────────┘
+```
+
 ### Data Structure Design
 
 The program uses a structured approach to data management:
@@ -38,6 +89,151 @@ struct FileStruct {
 - Fixed-size arrays for memory management in introductory C programming
 - String buffers sized to accommodate typical content lengths
 - Structured data organization for efficient processing
+
+### System Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MAIN PROGRAM                             │
+│  ┌─────────────────┐  ┌─────────────────┐                   │
+│  │   main()        │  │   Menu System   │                   │
+│  │                 │  │                 │                   │
+│  │ • Load data     │  │ • User input    │                   │
+│  │ • Display menu  │  │ • Switch cases  │                   │
+│  │ • Loop until    │  │ • Function calls│                   │
+│  │   exit          │  │                 │                   │
+│  └─────────────────┘  └─────────────────┘                   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  CORE FUNCTIONS                             │
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │displayAll   │  │searchByCat  │  │saveCatToFile│          │
+│  │             │  │             │  │             │          │
+│  │• Table fmt  │  │• User input │  │• Unique cat │          │
+│  │• Loop data  │  │• Case-insen │  │• File write │          │
+│  │• Print all  │  │• Filter     │  │• Filename   │          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                HELPER FUNCTIONS                             │
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │loadFileCont │  │caseInsens   │  │trimWhite    │          │
+│  │             │  │             │  │             │          │
+│  │• File open  │  │• String cmp │  │• Lead/Trail │          │
+│  │• Parse data │  │• Lowercase  │  │• Clean str  │          │
+│  │• Error chk  │  │• Return 0/1 │  │• Null term  │          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐                           │
+│  │extractUniq  │  │buildFilename│                           │
+│  │             │  │             │                           │
+│  │• Remove dup │  │• Lowercase  │                           │
+│  │• Case-insen │  │• Space→_    │                           │
+│  │• Return cnt │  │• Add suffix │                           │
+│  └─────────────┘  └─────────────┘                           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow Diagram
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   DATA      │    │  PROCESSING │    │   OUTPUT    │
+│   SOURCES   │    │             │    │             │
+├─────────────┤    ├─────────────┤    ├─────────────┤
+│             │    │             │    │             │
+│ calls_to_   │───▶│ FileStruct  │───▶│ Console     │
+│ action.txt  │    │ Array       │    │ Display     │
+│             │    │             │    │             │
+│             │    │             │    │             │
+│ User Input  │───▶│ String      │───▶│ Filtered    │
+│ (Menu/      │    │ Processing  │    │ Results     │
+│ Search)     │    │             │    │             │
+│             │    │             │    │             │
+│             │    │             │    │             │
+│             │    │             │───▶│ Export      │
+│             │    │             │    │ Files       │
+│             │    │             │    │ (*.txt)     │
+└─────────────┘    └─────────────┘    └─────────────┘
+```
+
+### Function Call Hierarchy
+
+```
+main()
+├── loadFileContent()
+│   ├── trimWhitespace() [helper]
+│   └── trimWhitespace() [helper]
+├── displayAll()
+├── searchByCategory()
+│   └── caseInsensitiveStringsCompare() [helper]
+├── saveCategoryToFile()
+│   ├── extractUniqueCategories() [helper]
+│   │   └── caseInsensitiveStringsCompare() [helper]
+│   ├── buildFilename() [helper]
+│   └── caseInsensitiveStringsCompare() [helper]
+└── printf() [for option 3]
+```
+
+## Memory Layout and Data Processing
+
+### Memory Allocation Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MEMORY MAP                               │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              STACK MEMORY                           │    │
+│  │                                                     │    │
+│  │  ┌─────────────┐  ┌─────────────┐                   │    │
+│  │  │ main()      │  │ Functions   │                   │    │
+│  │  │ variables   │  │ local vars  │                   │    │
+│  │  │             │  │             │                   │    │
+│  │  │ fileContent │  │ searchCat   │                   │    │
+│  │  │ [10 structs]│  │ filename    │                   │    │
+│  │  │ choice      │  │ buffers     │                   │    │
+│  │  └─────────────┘  └─────────────┘                   │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              STATIC DATA                            │    │
+│  │                                                     │    │
+│  │  • String literals                                  │    │
+│  │  • Format strings                                   │    │
+│  │  • Menu text                                        │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              HEAP (File I/O)                        │    │
+│  │                                                     │    │
+│  │  • File buffers (stdio internal)                    │    │
+│  │  • Temporary storage during file operations         │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Data Processing Pipeline
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   RAW       │    │   PARSED    │    │   CLEAN     │
+│   DATA      │───▶│   DATA      │───▶│   DATA      │
+│             │    │             │    │             │
+│ "1|Child    │    │ number: 1   │    │ number: 1   │
+│  Welfare|   │    │ category:   │    │ category:   │
+│  We call..."│    │ "Child      │    │ "Child      │
+│             │    │  Welfare"   │    │  Welfare"   │
+│             │    │ description:│    │ description:│
+│             │    │ "We call..."│    │ "We call..."│
+└─────────────┘    └─────────────┘    └─────────────┘
+```
 
 ### Core Components
 
@@ -311,6 +507,26 @@ The program implements comprehensive error handling:
 - Linear search algorithms (O(n)) for category matching
 - Unique category extraction uses nested loops (O(n²))
 - File I/O operations minimized through batch processing
+
+### Performance Analysis Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 TIME COMPLEXITY ANALYSIS                    │
+│                                                             │
+│  ┌─────────────────┐  ┌─────────────────┐                   │
+│  │   OPERATIONS    │  │   COMPLEXITY    │                   │
+│  │                 │  │                 │                   │
+│  │ File Loading    │  │ O(n)            │                   │
+│  │ Display All     │  │ O(n)            │                   │
+│  │ Search Category │  │ O(n)            │                   │
+│  │ Save to File    │  │ O(n²)           │                   │
+│  │   (unique cats) │  │                 │                   │
+│  └─────────────────┘  └─────────────────┘                   │
+│                                                             │
+│  Where n = number of records (max 10)                       │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ## Educational Value
 
