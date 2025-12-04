@@ -14,7 +14,7 @@ void searchByCategory(struct FileStruct list[], int fileContentSize); // MAX: pr
 void saveCategoryToFile(struct FileStruct list[], int fileContentSize); // MARCOS MELO: prototype for save category to file function
 
 // helper functions
-int loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER:
+int loadFileContent(struct FileStruct fileContent[], int maxItems); // TYLER: prototype trim whitespaces at the start and end of strings 
 int caseInsensitiveStringsCompare(char str1[], char str2[]); // MARCOS MELO: prototype to compare two strings case-insensitive
 void trimWhitespace(char str[]); // MARCOS MELO: prototype to trim leading/trailing whitespace
 int extractUniqueCategories(struct FileStruct list[], int fileContentSize, char uniqueCategories[][20]); // MARCOS MELO: prototype to extract unique categories
